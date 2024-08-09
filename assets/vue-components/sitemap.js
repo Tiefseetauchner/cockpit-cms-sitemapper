@@ -14,7 +14,14 @@ export default {
         priority: "",
         lastmod: "",
       },
+      newDynamicSite: {
+        _state: 1,
+        modelname: "",
+        urltemplate: "",
+        changefreq: "",
+      },
       editItem: {},
+      editDynamicItem: {},
     };
   },
   computed: {
@@ -82,11 +89,36 @@ export default {
       this.load();
     },
 
+    saveNewDynamicItem() {
+      this.$request("/content/models/saveItem/sitemapperdynamicsites", {
+        item: this.newDynamicSite,
+      });
+
+      this.newDynamicSite = {
+        _state: 1,
+        modelname: "",
+        urltemplate: "",
+        changefreq: "",
+      };
+
+      this.load();
+    },
+
     saveEditItem() {
       this.$request("/content/models/saveItem/sitemappersites", {
         item: this.editItem,
       }).then(() => {
         this.editItem = {};
+
+        this.load();
+      });
+    },
+
+    saveEditDynamicItem() {
+      this.$request("/content/models/saveItem/sitemapperdynamicsites", {
+        item: this.editDynamicItem,
+      }).then(() => {
+        this.editDynamicItem = {};
 
         this.load();
       });
@@ -99,6 +131,18 @@ export default {
     deleteItem() {
       App.ui.confirm("Are you sure you want to delete this site?", () => {
         this.$request("/content/collection/remove/sitemappersites", {
+          ids: [this.editItem._id],
+        }).then(() => {
+          this.editItem = {};
+
+          this.load();
+        });
+      });
+    },
+
+    deleteDynamicItem() {
+      App.ui.confirm("Are you sure you want to delete this site?", () => {
+        this.$request("/content/collection/remove/sitemapperdynamicsites", {
           ids: [this.editItem._id],
         }).then(() => {
           this.editItem = {};
@@ -196,25 +240,25 @@ export default {
             <td fixed="left" class="kiss-align-center" v-if="item._id === editItem._id">
               <div class="kiss-flex kiss-flex-middle">
                 <input type="text" v-model="editItem.loc" placeholder="Location"
-                  class="kiss-input kiss-input-primary kiss-width-100" />
+                  class="kiss-input kiss-input-primary" />
               </div>
             </td>
             <td fixed="left" class="kiss-align-center" v-if="item._id === editItem._id">
               <div class="kiss-flex kiss-flex-middle">
                 <input type="text" v-model="editItem.changefreq" placeholder="Change frequency"
-                  class="kiss-input kiss-input-primary kiss-width-100" />
+                  class="kiss-input kiss-input-primary" />
               </div>
             </td>
             <td fixed="left" class="kiss-align-center" v-if="item._id === editItem._id">
               <div class="kiss-flex kiss-flex-middle">
                 <input type="text" v-model="editItem.lastmod" placeholder="Last Modified"
-                  class="kiss-input kiss-input-primary kiss-width-100" />
+                  class="kiss-input kiss-input-primary" />
               </div>
             </td>
             <td fixed="left" class="kiss-align-center" v-if="item._id === editItem._id">
               <div class="kiss-flex kiss-flex-middle">
                 <input type="text" v-model="editItem.priority" placeholder="Priority"
-                  class="kiss-input kiss-input-primary kiss-width-100" />
+                  class="kiss-input kiss-input-primary" />
               </div>
             </td>
             <td fixed="left" class="kiss-align-center" v-if="item._id === editItem._id">
@@ -230,25 +274,25 @@ export default {
             <td fixed="left" class="kiss-align-center">
               <div class="kiss-flex kiss-flex-middle">
                 <input type="text" v-model="newSite.loc" placeholder="Location"
-                  class="kiss-input kiss-input-primary kiss-width-100" />
+                  class="kiss-input kiss-input-primary" />
               </div>
             </td>
             <td fixed="left" class="kiss-align-center">
               <div class="kiss-flex kiss-flex-middle">
                 <input type="text" v-model="newSite.changefreq" placeholder="Change frequency"
-                  class="kiss-input kiss-input-primary kiss-width-100" />
+                  class="kiss-input kiss-input-primary" />
               </div>
             </td>
             <td fixed="left" class="kiss-align-center">
               <div class="kiss-flex kiss-flex-middle">
                 <input type="text" v-model="newSite.lastmod" placeholder="Last Modified"
-                  class="kiss-input kiss-input-primary kiss-width-100" />
+                  class="kiss-input kiss-input-primary" />
               </div>
             </td>
             <td fixed="left" class="kiss-align-center">
               <div class="kiss-flex kiss-flex-middle">
                 <input type="text" v-model="newSite.priority" placeholder="Priority"
-                  class="kiss-input kiss-input-primary kiss-width-100" />
+                  class="kiss-input kiss-input-primary" />
               </div>
             </td>
             <td fixed="left" class="kiss-align-center">
@@ -260,11 +304,118 @@ export default {
         </tbody>
       </table>
   
-      <div class="kiss-text-center">
-        <p v-for="item in dynamicSites" class="kiss-text-center">
-          {{ item.modelname }}
-        </p>
-      </div>
+      <table class="kiss-table animated fadeIn">
+        <thead>
+          <tr>
+            <th fixed="left" class="kiss-align-center">
+              <div class="kiss-flex kiss-flex-middle">
+                <span class="kiss-margin-small-left">Model Name</span>
+              </div>
+            </th>
+            <th fixed="left" class="kiss-align-center">
+              <div class="kiss-flex kiss-flex-middle">
+                <span class="kiss-margin-small-left">Url Template</span>
+              </div>
+            </th>
+            <th fixed="left" class="kiss-align-center">
+              <div class="kiss-flex kiss-flex-middle">
+                <span class="kiss-margin-small-left">Change frequency</span>
+              </div>
+            </th>
+            <th fixed="right" class="kiss-align-center">
+              <div class="kiss-flex kiss-flex-middle">
+                <span class="kiss-margin-small-left">Edit</span>
+              </div>
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr v-for="item in dynamicSites">
+            <td fixed="left" class="kiss-align-center" v-if="item._id !== editDynamicItem._id">
+              <div class="kiss-flex kiss-flex-middle">
+                {{ item.modelname }}
+              </div>
+            </td>
+            <td fixed="left" class="kiss-align-center" v-if="item._id !== editDynamicItem._id">
+              <div class="kiss-flex kiss-flex-middle">
+                {{ item.urltemplate }}
+              </div>
+            </td>
+            <td fixed="left" class="kiss-align-center" v-if="item._id !== editDynamicItem._id">
+              <div class="kiss-flex kiss-flex-middle">
+                {{ item.changefreq }}
+              </div>
+            </td>
+            <td fixed="right" class="kiss-align-center" v-if="item._id !== editDynamicItem._id">
+              <div class="kiss-flex kiss-flex-middle">
+                <app-button @click="editItemAction(item)" class="kiss-button kiss-button-primary kiss-button-small">
+                  <icon class="kiss-margin-small-right">edit</icon>
+                </app-button>
+              </div>
+            </td>
+  
+            <td fixed="left" class="kiss-align-center" v-if="item._id === editDynamicItem._id">
+              <div class="kiss-flex kiss-flex-middle">
+                <input type="text" v-model="editDynamicItem.modelname" placeholder="Modelname"
+                  class="kiss-input kiss-input-primary" />
+              </div>
+            </td>
+            <td fixed="left" class="kiss-align-center" v-if="item._id === editDynamicItem._id">
+              <div class="kiss-flex kiss-flex-middle">
+                <input type="text" v-model="editDynamicItem.urltemplate" placeholder="Url Template"
+                  class="kiss-input kiss-input-primary" />
+              </div>
+            </td>
+            <td fixed="left" class="kiss-align-center" v-if="item._id === editDynamicItem._id">
+              <div class="kiss-flex kiss-flex-middle">
+                <input type="text" v-model="editDynamicItem.changefreq" placeholder="Change frequency"
+                  class="kiss-input kiss-input-primary" />
+              </div>
+            </td>
+            <td fixed="left" class="kiss-align-center" v-if="item._id === editDynamicItem._id">
+              <app-button @click="saveEditDynamicItem()" class="kiss-button kiss-button-primary kiss-button-small">
+                <icon class="kiss-margin-small-right">save</icon>
+              </app-button>
+              <app-button @click="deleteItem()" class="kiss-button kiss-button-danger kiss-button-small">
+                <icon class="kiss-margin-small-right">delete</icon>
+              </app-button>
+            </td>
+            <td fixed="left" class="kiss-align-center" v-if="item._id === editDynamicItem._id">
+              <app-button @click="saveEditDynamicItem()" class="kiss-button kiss-button-primary kiss-button-small">
+                <icon class="kiss-margin-small-right">save</icon>
+              </app-button>
+              <app-button @click="deleteDynamicItem()" class="kiss-button kiss-button-danger kiss-button-small">
+                <icon class="kiss-margin-small-right">delete</icon>
+              </app-button>
+            </td>
+          </tr>
+          <tr>
+            <td fixed="left" class="kiss-align-center">
+              <div class="kiss-flex kiss-flex-middle">
+                <input type="text" v-model="newDynamicSite.modelname" placeholder="Modelname"
+                  class="kiss-input kiss-input-primary" />
+              </div>
+            </td>
+            <td fixed="left" class="kiss-align-center">
+              <div class="kiss-flex kiss-flex-middle">
+                <input type="text" v-model="newDynamicSite.urltemplate" placeholder="Url Template"
+                  class="kiss-input kiss-input-primary" />
+              </div>
+            </td>
+            <td fixed="left" class="kiss-align-center">
+              <div class="kiss-flex kiss-flex-middle">
+                <input type="text" v-model="newDynamicSite.changefreq" placeholder="Change frequency"
+                  class="kiss-input kiss-input-primary" />
+              </div>
+            </td>
+            <td fixed="left" class="kiss-align-center">
+              <app-button @click="saveNewDynamicItem()" class="kiss-button kiss-button-primary kiss-button-small">
+                <icon class="kiss-margin-small-right">save</icon>
+              </app-button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
     </div>
   
   </div>

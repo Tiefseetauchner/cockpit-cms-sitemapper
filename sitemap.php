@@ -44,7 +44,7 @@ if($app->helper('content.model')->exists('sitemappersites') != null)
       echo '<url>';
       echo '<loc>'. $url. '</loc>';
       echo '<changefreq>'. $dynamicSiteModel['changefreq']. '</changefreq>';
-      echo '<lastmod>'. $item['_modified']. '</lastmod>';
+      echo '<lastmod>'. gmdate("Y-m-d\TH:i:s\Z", (int)($item['_modified'])). '</lastmod>';
       echo '</url>';
     }
   }
