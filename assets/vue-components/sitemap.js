@@ -128,6 +128,10 @@ export default {
       this.editItem = item;
     },
 
+    editDynamicItemAction(item) {
+      this.editDynamicItem = item;
+    },
+
     deleteItem() {
       App.ui.confirm("Are you sure you want to delete this site?", () => {
         this.$request("/content/collection/remove/sitemappersites", {
@@ -270,6 +274,7 @@ export default {
               </app-button>
             </td>
           </tr>
+
           <tr>
             <td fixed="left" class="kiss-align-center">
               <div class="kiss-flex kiss-flex-middle">
@@ -304,6 +309,8 @@ export default {
         </tbody>
       </table>
   
+      <p class="kiss-size-large kiss-margin-top">Dynamic Sites</p>
+
       <table class="kiss-table animated fadeIn">
         <thead>
           <tr>
@@ -348,7 +355,7 @@ export default {
             </td>
             <td fixed="right" class="kiss-align-center" v-if="item._id !== editDynamicItem._id">
               <div class="kiss-flex kiss-flex-middle">
-                <app-button @click="editItemAction(item)" class="kiss-button kiss-button-primary kiss-button-small">
+                <app-button @click="editDynamicItemAction(item)" class="kiss-button kiss-button-primary kiss-button-small">
                   <icon class="kiss-margin-small-right">edit</icon>
                 </app-button>
               </div>
@@ -371,14 +378,6 @@ export default {
                 <input type="text" v-model="editDynamicItem.changefreq" placeholder="Change frequency"
                   class="kiss-input kiss-input-primary" />
               </div>
-            </td>
-            <td fixed="left" class="kiss-align-center" v-if="item._id === editDynamicItem._id">
-              <app-button @click="saveEditDynamicItem()" class="kiss-button kiss-button-primary kiss-button-small">
-                <icon class="kiss-margin-small-right">save</icon>
-              </app-button>
-              <app-button @click="deleteItem()" class="kiss-button kiss-button-danger kiss-button-small">
-                <icon class="kiss-margin-small-right">delete</icon>
-              </app-button>
             </td>
             <td fixed="left" class="kiss-align-center" v-if="item._id === editDynamicItem._id">
               <app-button @click="saveEditDynamicItem()" class="kiss-button kiss-button-primary kiss-button-small">
