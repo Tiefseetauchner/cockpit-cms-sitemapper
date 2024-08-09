@@ -8,4 +8,3 @@ $this->on(
         include __DIR__.'/admin.php';
     }
 );
-

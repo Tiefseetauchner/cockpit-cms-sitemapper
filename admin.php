@@ -7,11 +7,11 @@ $this->on(
         $this->helper('menus')->addLink(
             'modules', [
             'label'  => 'Sitemap',
-            'icon'   => 'sitemap:icon.svg',
+            'icon'   => 'sitemapper:icon.svg',
             'route'  => '/sitemap',
             'active' => false,
             'group'  => 'Content',
-            'prio'   => 3
+            'prio'   => 0
             ]
         );
     }
