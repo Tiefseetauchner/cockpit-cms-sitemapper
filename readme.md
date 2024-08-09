@@ -2,33 +2,22 @@
 Basically trying to replace my abysmal sitemap.php on [lukechriswalker.at](https://www.lukechriswalker.at)
 
 ## Ideas
-- [ ] Create and remove Sites with links
-- [ ] Add magic that allows mapping from content collections to items
+- [x] Create and remove Sites with links
+- [x] Add magic that allows mapping from content collections to items
 - [ ] ???
 - [ ] Profit [Gib fibsh plz](https://buymeacoffee.com/tiefseetauchner)
 
 ## TODOs
 If you're a programmer who really likes my addon, you can expand it. I have the following TODOs that I may or may not get to:
-- [ ] Mapping collections to sites
-- [ ] Don't do PHP magic anymore
-  - We should use REST tbh, and make the sitemap independent of how you host your cockpit cms
+- [x] Mapping collections to sites
+- [ ] ~~Don't do PHP magic anymore~~
+  - ~~We should use REST tbh, and make the sitemap independent of how you host your cockpit cms~~
+  - The painful magic was solved thanks to aheinze! :)
 
 ## Installation
 Unlike my other addons, this is a bit more involved to install, so I'll have a section here.
 
-First of all, this relies on some... hacky things I did to my cockpit cms. Namely, I extracted everything but the last line of index.php into a start.php. It looks something like this now:
-
-```php
-<?php
-
-require __DIR__ . '/start.php';
-
-// run app
-$app->trigger(APP_API_REQUEST ? 'app.api.request':'app.admin.request', [$request])->run($request->route, $request);
-```
-If you want to use the addon, you'll have to do that too. For now. Until we figured out a better way to do this.
-
-Now, once that works you can add a `sitemap.php` to your website root that looks like this:
+Once you have installed the addon and verified it works you can add a `sitemap.php` to your website root that looks like this:
 
 ```php
 <?php
